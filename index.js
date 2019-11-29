@@ -24,7 +24,7 @@ class DurationChecker extends Transform {
           console.error(`\tPlaylist URI: ${data.uri}`);
           console.error(`\tTargetDuration: ${targetDuration}`);
           console.error(`\tSegment URI: ${segment.uri}`);
-          console.error(`\tSegmentDuration: ${segment.uri}`);
+          console.error(`\tSegmentDuration: ${segment.duration}`);
         }
       }
     }
