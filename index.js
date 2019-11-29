@@ -19,12 +19,12 @@ class DurationChecker extends Transform {
       console.log(`\tURI: ${data.uri}`);
       const {targetDuration} = data;
       for (const segment of data.segments) {
-        if (segment.duration > targetDuration) {
-          console.error('=== Vioration: Duration exceeds #EXT-X-TARGETDURATION ===');
+        if (Math.round(segment.duration) > targetDuration) {
+          console.error('=== Violation: EXTINF duration exceeds #EXT-X-TARGETDURATION ===');
           console.error(`\tPlaylist URI: ${data.uri}`);
           console.error(`\tTargetDuration: ${targetDuration}`);
           console.error(`\tSegment URI: ${segment.uri}`);
-          console.error(`\tDuration: ${segment.uri}`);
+          console.error(`\tSegmentDuration: ${segment.uri}`);
         }
       }
     }
