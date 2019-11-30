@@ -42,4 +42,7 @@ $ tail -f error.log
     TargetDuration: 6
     Segment URI: xxx
     SegmentDuration: 8
+--- Contents of .m3u8 file: Start ---
+{.m3u8 file}
+--- Contents of .m3u8 file: End ---
 ```

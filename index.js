@@ -25,6 +25,9 @@ class DurationChecker extends Transform {
           console.error(`\tTargetDuration: ${targetDuration}`);
           console.error(`\tSegment URI: ${segment.uri}`);
           console.error(`\tSegmentDuration: ${segment.duration}`);
+          console.error('--- Contents of .m3u8 file: Start ---');
+          console.error(data.source);
+          console.error('--- Contents of .m3u8 file: End ---');
         }
       }
     }
