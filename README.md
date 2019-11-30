@@ -6,8 +6,10 @@ A command line tool to monitor HLS playlists and check if there's any violation 
 
 
 ## Install
+You need `git`[and the latest node](https://nodejs.org/en/)
 ```
 $ git clone https://github.com/kuu/hls-duration-checker.git
+$ cd hls-duration-checker
 ```
 
 ## Run
