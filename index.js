@@ -1,7 +1,12 @@
 const {Transform} = require('stream');
 const hlx = require('hlx-lib');
+const validUrl = require('valid-url');
 
 const srcUrl = process.argv[2];
+
+if (!validUrl.isUri(srcUrl)) {
+  throw new Error(`Invalid URL: ${srcUrl}`);
+}
 
 class DurationChecker extends Transform {
   constructor() {
@@ -35,7 +40,7 @@ class DurationChecker extends Transform {
   }
 }
 
-hlx.src(srcUrl, {playlistOnly: true})
+hlx.src(srcUrl, {playlistOnly: true, noUriConversion: true})
   .pipe(new DurationChecker())
   .pipe(hlx.dest())
   .on('error', err => {

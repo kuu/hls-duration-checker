@@ -26,7 +26,8 @@
   "homepage": "https://github.com/kuu/hls-duration-checker#readme",
   "dependencies": {
     "forever": "^1.0.0",
-    "hlx-lib": "0.0.28"
+    "hlx-lib": "0.0.29",
+    "valid-url": "^1.0.9"
   },
   "devDependencies": {
     "xo": "^0.25.3"
