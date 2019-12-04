@@ -1,11 +1,20 @@
 const {Transform} = require('stream');
 const hlx = require('hlx-lib');
 const validUrl = require('valid-url');
+const timestamp = require('time-stamp');
 
 const srcUrl = process.argv[2];
 
 if (!validUrl.isUri(srcUrl)) {
   throw new Error(`Invalid URL: ${srcUrl}`);
+}
+
+function print(msg) {
+  console.log(`${timestamp.utc('YYYY-MM-DD HH:mm:ss')} ${msg}`);
+}
+
+function printErr(msg) {
+  console.error(`${timestamp.utc('YYYY-MM-DD HH:mm:ss')} ${msg}`);
 }
 
 class DurationChecker extends Transform {
@@ -16,23 +25,23 @@ class DurationChecker extends Transform {
   _transform(data, _, cb) {
     if (data.type === 'playlist') {
       if (data.isMasterPlaylist) {
-        console.log(`Loading master playlist.`);
-        console.log(`\tURI: ${data.uri}`);
+        print(`Loading master playlist.`);
+        print(`\tURI: ${data.uri}`);
         return cb(null, data);
       }
-      console.log(`Loading media playlist.`);
-      console.log(`\tURI: ${data.uri}`);
+      print(`Loading media playlist.`);
+      print(`\tURI: ${data.uri}`);
       const {targetDuration} = data;
       for (const segment of data.segments) {
         if (Math.round(segment.duration) > targetDuration) {
-          console.error('=== Violation: EXTINF duration exceeds #EXT-X-TARGETDURATION ===');
-          console.error(`\tPlaylist URI: ${data.uri}`);
-          console.error(`\tTargetDuration: ${targetDuration}`);
-          console.error(`\tSegment URI: ${segment.uri}`);
-          console.error(`\tSegmentDuration: ${segment.duration}`);
-          console.error('--- Contents of .m3u8 file: Start ---');
-          console.error(data.source);
-          console.error('--- Contents of .m3u8 file: End ---');
+          printErr('=== Violation: EXTINF duration exceeds #EXT-X-TARGETDURATION ===');
+          printErr(`\tPlaylist URI: ${data.uri}`);
+          printErr(`\tTargetDuration: ${targetDuration}`);
+          printErr(`\tSegment URI: ${segment.uri}`);
+          printErr(`\tSegmentDuration: ${segment.duration}`);
+          printErr('--- Contents of .m3u8 file: Start ---');
+          printErr(data.source);
+          printErr('--- Contents of .m3u8 file: End ---');
         }
       }
     }
