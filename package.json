@@ -25,8 +25,10 @@
   },
   "homepage": "https://github.com/kuu/hls-duration-checker#readme",
   "dependencies": {
-    "forever": "^1.0.0",
+    "date-and-time": "^0.12.0",
+    "forever": "^2.0.0",
     "hlx-lib": "0.0.29",
+    "node-fetch": "^2.6.0",
     "time-stamp": "^2.2.0",
     "valid-url": "^1.0.9"
   },
@@ -45,6 +47,7 @@
       "no-cond-assign": 0,
       "no-mixed-operators": 0,
       "no-multi-assign": 0,
+      "no-use-extend-native/no-use-extend-native": 0,
       "padding-line-between-statements": 0,
       "quotes": 0,
       "unicorn/catch-error-name": 0,
