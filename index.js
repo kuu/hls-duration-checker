@@ -14,6 +14,8 @@ if (!validUrl.isUri(srcUrl)) {
   throw new Error(`Invalid URL: ${srcUrl}`);
 }
 
+process.setMaxListeners(0);
+
 function print(msg) {
   console.log(`${timestamp.utc('YYYY-MM-DD HH:mm:ss')} ${msg}`);
 }
