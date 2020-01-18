@@ -8,6 +8,9 @@ const timestamp = require('time-stamp');
 const fetch = require('node-fetch');
 const date = require('date-and-time');
 
+const {DEBUG} = process.env;
+console.log(`DEBUG=${DEBUG}`);
+
 const srcUrl = process.argv[2];
 
 if (!validUrl.isUri(srcUrl)) {
@@ -52,7 +55,28 @@ class DurationChecker extends Transform {
   constructor() {
     super({objectMode: true});
     this.variantUrls = [];
+    this.invalidSegments = new Set();
     this.dirPath = `${__dirname}/${createTmpDir(__dirname)}`;
+    this.debugFlag = false;
+    this._scheduleDebug(10);
+  }
+
+  _scheduleDebug(nSecLater) {
+    if (!DEBUG) {
+      return;
+    }
+    setTimeout(() => {
+      this.debugFlag = true;
+    }, nSecLater * 1000);
+  }
+
+  _checkDebug({segments, targetDuration}) {
+    if (!this.debugFlag) {
+      return;
+    }
+    segments[0].duration = targetDuration * 2;
+    this.debugFlag = false;
+    this._scheduleDebug(targetDuration * segments.length);
   }
 
   _extractVariantUrls({uri: baseUri, variants}) {
@@ -72,30 +96,39 @@ class DurationChecker extends Transform {
     return Promise.all(promiseList).then(() => dirPath);
   }
 
+  _logInvalidSegment({uri: playlistUrl, targetDuration, source}, {uri: segmentUrl, duration}) {
+    if (this.invalidSegments.has(segmentUrl)) {
+      return;
+    }
+    this.invalidSegments.add(segmentUrl);
+    printErr('=== Violation: EXTINF duration exceeds #EXT-X-TARGETDURATION ===');
+    printErr(`\tPlaylist URI: ${playlistUrl}`);
+    printErr(`\tTargetDuration: ${targetDuration}`);
+    printErr(`\tSegment URI: ${segmentUrl}`);
+    printErr(`\tSegmentDuration: ${duration}`);
+    printErr('--- Contents of .m3u8 file: Start ---');
+    printErr(source);
+    printErr('--- Contents of .m3u8 file: End ---');
+    this._storeVariants('_invalid-duration').then(filePath => {
+      printErr(`All .m3u8 file are stored at: ${filePath}\n`);
+    });
+  }
+
   _transform(data, _, cb) {
     if (data.type === 'playlist') {
-      if (data.isMasterPlaylist) {
+      const playlist = data;
+      if (playlist.isMasterPlaylist) {
         print(`Loading master playlist.`);
-        print(`\tURI: ${data.uri}`);
-        this._extractVariantUrls(data);
-        return cb(null, data);
-      }
-      print(`Loading media playlist.`);
-      print(`\tURI: ${data.uri}`);
-      const {targetDuration} = data;
-      for (const segment of data.segments) {
-        if (Math.round(segment.duration) > targetDuration) {
-          printErr('=== Violation: EXTINF duration exceeds #EXT-X-TARGETDURATION ===');
-          printErr(`\tPlaylist URI: ${data.uri}`);
-          printErr(`\tTargetDuration: ${targetDuration}`);
-          printErr(`\tSegment URI: ${segment.uri}`);
-          printErr(`\tSegmentDuration: ${segment.duration}`);
-          printErr('--- Contents of .m3u8 file: Start ---');
-          printErr(data.source);
-          printErr('--- Contents of .m3u8 file: End ---');
-          this._storeVariants('_invalid-duration').then(filePath => {
-            printErr(`All .m3u8 file are stored at: ${filePath}`);
-          });
+        print(`\tURI: ${playlist.uri}`);
+        this._extractVariantUrls(playlist);
+      } else {
+        print(`Loading media playlist.`);
+        print(`\tURI: ${playlist.uri}`);
+        this._checkDebug(playlist);
+        for (const segment of playlist.segments) {
+          if (Math.round(segment.duration) > playlist.targetDuration) {
+            this._logInvalidSegment(playlist, segment);
+          }
         }
       }
     }
