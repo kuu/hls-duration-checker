@@ -6,9 +6,13 @@
   "scripts": {
     "lint": "xo",
     "audit": "npm audit --audit-level high",
-    "test": "npm run lint && npm run audit && node ./index.js",
-    "start": "forever start -o server.log -e error.log ./index.js",
-    "stop": "forever stop ./index.js"
+    "test": "npm run lint && npm run audit && ava",
+    "client-start": "pm2 start client.js --",
+    "client-stop": "pm2 stop client.js",
+    "server-start": "pm2 start server.js",
+    "server-stop": "pm2 stop server.js",
+    "logs": "pm2 logs",
+    "reset": "pm2 flush && pm2 kill"
   },
   "repository": {
     "type": "git",
@@ -25,15 +29,17 @@
   },
   "homepage": "https://github.com/kuu/hls-duration-checker#readme",
   "dependencies": {
-    "date-and-time": "^0.12.0",
-    "forever": "^2.0.0",
+    "date-and-time": "^0.14.0",
+    "hls-parser": "^0.6.2",
     "hlx-lib": "0.0.29",
     "node-fetch": "^2.6.0",
+    "pm2": "^4.4.1",
     "time-stamp": "^2.2.0",
     "valid-url": "^1.0.9"
   },
   "devDependencies": {
-    "xo": "^0.25.3"
+    "ava": "^3.11.1",
+    "xo": "^0.33.0"
   },
   "xo": {
     "esnext": true,
@@ -52,7 +58,8 @@
       "quotes": 0,
       "unicorn/catch-error-name": 0,
       "unicorn/filename-case": 0,
-      "unicorn/no-zero-fractions": 0
+      "unicorn/no-zero-fractions": 0,
+      "unicorn/prevent-abbreviations": 0
     }
   }
 }
