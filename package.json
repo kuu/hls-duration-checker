@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/kuu/hls-duration-checker#readme",
   "dependencies": {
-    "date-and-time": "^0.14.0",
+    "date-and-time": "^0.14.2",
     "hls-parser": "^0.6.2",
     "hlx-lib": "0.0.29",
     "node-fetch": "^2.6.0",
