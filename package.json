@@ -32,7 +32,7 @@
     "date-and-time": "^0.14.0",
     "hls-parser": "^0.6.2",
     "hlx-lib": "0.0.29",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^3.1.1",
     "pm2": "^4.4.1",
     "time-stamp": "^2.2.0",
     "valid-url": "^1.0.9"
